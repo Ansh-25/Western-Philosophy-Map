@@ -1,0 +1,593 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="description" content="Explore Western philosophy by era, by question, or by thinker.">
+<meta name="theme-color" content="#173d31">
+<link rel="manifest" href="./manifest.webmanifest">
+<link rel="icon" href="./icon-192.png" type="image/png" sizes="192x192">
+<link rel="apple-touch-icon" href="./apple-touch-icon.png" sizes="180x180">
+<title>Western Philosophy · A Field Guide</title>
+<style>
+:root {
+  color-scheme: light;
+  --paper: #f6f1e6;
+  --tile: #fffcf5;
+  --text: #1f3028;
+  --muted: #4e5e53;
+  --green: #173d31;
+  --rule: #d7d5c6;
+  --accent: #38644a;
+  --display: Georgia, "Times New Roman", serif;
+}
+* {box-sizing: border-box}
+html {scroll-behavior: smooth}
+body {margin: 0; background: var(--paper); color: var(--text); font: 1rem/1.55 system-ui, sans-serif}
+button,input {font: inherit}
+button {cursor: pointer}
+a {color: inherit; text-underline-offset: .2em}
+[hidden] {display: none !important}
+:focus-visible {outline: 3px solid #9b4f31; outline-offset: 4px}
+.hero :focus-visible {outline-color: #f5bf95}
+.wrap {width: min(1110px, calc(100% - 3rem)); margin-inline: auto}
+.hero {background: var(--green); color: #fff8eb; border-bottom: 5px solid #c77652; overflow: hidden}
+.hero-inner {position: relative; isolation: isolate; padding-block: clamp(1.9rem, 5vw, 4.25rem)}
+.eyebrow {font-size: .83rem; font-weight: 740; letter-spacing: .12em; text-transform: uppercase; margin: 0}
+.hero .eyebrow {color: #ffd4b0}
+h1,h2,h3 {font-family: var(--display); font-weight: 400}
+h1 {font-size: clamp(2.7rem, 7.7vw, 6.3rem); letter-spacing: -.065em; line-height: .96; margin: .32em 0 .22em; max-width: 10em}
+.hero p:last-of-type {margin: 0; color: #e7ebe1; max-width: 35ch}
+.hero-art {position: absolute; z-index: -1; width: min(42vw, 425px); height: auto; right: 0; top: 50%; transform: translateY(-50%); color: #80a792; opacity: .75}
+.layout {display: grid; grid-template-columns: 240px minmax(0, 1fr); gap: clamp(1.6rem, 5vw, 4.5rem); padding-block: 2rem 4rem}
+.guide h2 {font: 750 .9rem/1.2 system-ui, sans-serif; margin: 0 0 .75rem}
+.mode {display: grid; grid-template-columns: 1fr 1fr; background: #e9e9dc; border: 1px solid var(--rule); border-radius: 9px; padding: .25rem; gap: .25rem; margin-bottom: 1.25rem}
+.mode button {min-height: 44px; padding: .3rem; border: 0; border-radius: 6px; background: transparent; color: var(--green); font-size: .9rem; font-weight: 720}
+.mode button[aria-pressed=true] {background: var(--green); color: #fffaf0}
+.eras {display: grid; gap: .4rem}
+.eras a {position: relative; display: flex; flex-direction: column; justify-content: center; padding: .55rem .65rem .55rem .85rem; border-radius: 5px; min-height: 54px; text-decoration: none; border: 1px solid transparent; gap: .15rem; line-height: 1.25}
+.eras a::before {content: ""; position: absolute; inset: .55rem auto .55rem 0; width: 3px; border-radius: 3px; background: var(--accent)}
+.eras a:hover,.eras a[aria-current] {border-color: var(--rule); background: var(--tile)}
+.eras a[aria-current] {border-color: var(--accent)}
+.eras b {font-size: .9rem}
+.eras span {color: var(--muted); font-size: .8rem}
+.search {margin-bottom: 1.1rem}
+.search label {display: block; font-size: .88rem; font-weight: 730; margin-bottom: .35rem}
+.search input {min-height: 46px; min-width: 0; width: 100%; padding: .55rem .75rem; border-radius: 7px; border: 1px solid #8c988d; color: var(--text); background: var(--tile); font-size: 1rem}
+.search input::placeholder {color: #5b685f}
+.questions {display: grid; gap: .35rem}
+.questions button {text-align: left; min-height: 44px; padding: .45rem .55rem; border: 1px solid var(--rule); border-radius: 6px; background: var(--tile); color: var(--text); font-size: .9rem}
+.questions button:hover {border-color: var(--green)}
+.questions button[aria-pressed=true] {background: #dce8df; border-color: var(--green); font-weight: 700}
+.result {margin: 0 0 .9rem; padding: .6rem .75rem; background: #e5eadf; border-radius: 5px; color: var(--green)}
+.result p {margin: 0}
+.result p+p {margin-top: .35rem}
+.chapter-head {border-top: 3px solid var(--accent); padding-top: 1rem}
+.chapter-line {display: flex; gap: .5rem 1rem; justify-content: space-between; flex-wrap: wrap; align-items: baseline}
+.change {color: var(--accent); font-size: .875rem; font-weight: 650; display: none}
+.chapter-head .eyebrow {color: var(--accent); letter-spacing: .075em}
+.chapter-head .eyebrow span {margin-inline: .2rem}
+.chapter-head h2 {font-size: clamp(2rem, 5vw, 3.7rem); line-height: 1.02; letter-spacing: -.045em; margin: .25em 0}
+.chapter-head > p:not(.eyebrow) {margin: .55rem 0; max-width: 65ch}
+.start {border-left: 2px solid var(--accent); padding: .25rem 0 .25rem .65rem; color: var(--muted)}
+.start b {color: var(--accent); margin-right: .25rem}
+.era {scroll-margin-top: .75rem; margin-bottom: 2rem}
+.group {margin: 1.15rem 0 0}
+.group h3 {font-size: clamp(1.23rem, 2.5vw, 1.65rem); margin: 0 0 .55rem; line-height: 1.2}
+details {background: var(--tile); border: 1px solid var(--rule); border-radius: 8px; margin-bottom: .45rem}
+details[open] {border-color: var(--accent)}
+summary {cursor: pointer; display: grid; grid-template-columns: minmax(0, 1fr) auto auto; align-items: center; gap: .1rem .75rem; list-style: none; min-height: 62px; padding: .65rem .8rem; line-height: 1.3}
+summary::-webkit-details-marker {display: none}
+summary:hover {background: #e9eee5; border-radius: 7px}
+details[open] summary {background: #e9eee5; border-radius: 7px 7px 0 0}
+.entry-main {min-width: 0; overflow-wrap: anywhere}
+.entry-main strong {display: block; font-size: 1rem}
+.thinker {display: block; color: var(--muted); font-size: .9rem; margin-top: .18rem}
+.when {color: var(--accent); font-size: .8rem; font-weight: 680; max-width: 13ch; text-align: right}
+.chevron {width: 8px; height: 8px; border-right: 2px solid var(--accent); border-bottom: 2px solid var(--accent); transform: rotate(45deg); margin: -.18rem 2px 0}
+details[open] .chevron {transform: rotate(225deg); margin-top: .18rem}
+.entry-body {padding: .8rem 1rem 1rem; max-width: 73ch}
+.entry-body p {margin: .28rem 0 .7rem}
+.entry-body .claim {font: 1.22rem/1.45 var(--display); color: var(--green)}
+.entry-body h4 {font-size: .85rem; color: var(--accent); margin: .85rem 0 0; text-transform: uppercase; letter-spacing: .065em}
+.entry-body footer {border-top: 1px solid var(--rule); margin-top: .9rem; padding-top: .5rem; color: var(--muted); font-size: .9rem}
+.entry-body footer b {margin-right: .2rem}
+.entry-body .tags {margin-bottom: 0; color: var(--accent)}
+.empty {padding: 1rem; background: var(--tile); border: 1px solid var(--rule); border-radius: 7px; margin: 0 0 1.5rem}
+.empty button {min-height: 44px; color: var(--green); background: transparent; border: 1px solid var(--green); border-radius: 5px; margin-top: .5rem}
+.next {display: flex; justify-content: space-between; gap: 1rem; padding: .8rem 1rem; margin-top: 1.2rem; color: #fffaf0; background: var(--green); border-radius: 7px; text-decoration: none}
+.next:hover b {text-decoration: underline}
+.notes {border-top: 1px solid var(--rule); color: var(--muted)}
+.notes summary {display: block; font-weight: 740; min-height: 44px; padding-inline: 0; color: var(--text)}
+.notes summary::after {content: " +"}
+.notes[open] summary::after {content: " −"}
+.notes[open] summary,.notes summary:hover {background: transparent}
+details.notes {background: transparent; border: 0; border-top: 1px solid var(--rule); border-radius: 0}
+.notes p,.notes ul {margin-top: 0}
+@media (max-width: 740px) {
+  .wrap {width: calc(100% - 2rem)}
+  .hero-inner {padding-block: 1.6rem 1.45rem}
+  h1 {max-width: 8em}
+  .hero-art {right: -21%; width: 64%; opacity: .45}
+  .layout {display: block; padding-block: 1rem 2rem}
+  .guide {margin-bottom: 1.1rem}
+  .mode {margin-bottom: .65rem}
+  .guide h2 {margin-bottom: .45rem}
+  .eras {grid-template-columns: repeat(3, minmax(0, 1fr)); gap: .3rem}
+  .eras a {padding: .35rem .25rem .35rem .45rem; min-height: 49px; overflow-wrap: anywhere}
+  .eras a::before {width: 2px; inset-block: .35rem}
+  .eras b {font-size: .85rem}
+  .eras span {font-size: .75rem}
+  .questions {grid-template-columns: repeat(2, minmax(0, 1fr))}
+  .change {display: inline-flex; align-items: center; min-height: 44px; margin-block: -.675rem}
+}
+@media (max-width: 420px) {
+  summary {grid-template-columns: minmax(0, 1fr) auto; gap: .2rem .65rem; padding: .60rem .7rem}
+  .when {grid-column: 1; grid-row: 2; max-width: none; text-align: left}
+  .chevron {grid-column: 2; grid-row: 1 / span 2}
+}
+@media (prefers-reduced-motion: reduce) {html {scroll-behavior: auto}}
+</style>
+</head>
+<body>
+<header class="hero">
+  <div class="wrap hero-inner">
+    <p class="eyebrow">A field guide · 600 BCE to today</p>
+    <h1>Western Philosophy</h1>
+    <p>Read the arguments, try them on real questions, and see how the debates change over time.</p>
+    <svg class="hero-art" viewBox="0 0 430 310" fill="none" aria-hidden="true">
+      <g stroke="currentColor" stroke-width="1.4">
+        <circle cx="276" cy="157" r="124"/><circle cx="276" cy="157" r="102"/>
+        <circle cx="276" cy="157" r="65"/><ellipse cx="276" cy="157" rx="74" ry="124"/>
+        <ellipse cx="276" cy="157" rx="124" ry="61"/><path d="M276 18v278M137 157h278M179 60l194 194M179 254 373 60" opacity=".55"/>
+        <path d="M276 73c8 49 36 74 85 84-49 9-77 36-85 85-9-49-36-76-85-85 49-10 76-35 85-84Z" fill="#173d31"/>
+      </g><circle cx="276" cy="157" r="9" fill="#ffd4b0"/><circle cx="338" cy="75" r="5" fill="#d68458"/><circle cx="176" cy="225" r="5" fill="#d68458"/>
+    </svg>
+  </div>
+</header>
+<main class="wrap layout">
+  <aside class="guide" id="browse" aria-label="Explore the field guide">
+    <div class="mode" role="group" aria-label="Browse by" hidden>
+      <button type="button" data-mode="eras" aria-pressed="true">By era</button>
+      <button type="button" data-mode="questions" aria-pressed="false">By question</button>
+    </div>
+    <div id="era-picker"><h2>Choose an era</h2><nav class="eras" aria-label="Historical eras"><a href="#ancient" style="--accent:#38644a"><b>Ancient</b><span>c. 600 BCE–300 CE</span></a>
+<a href="#medieval" style="--accent:#884d2f"><b>Medieval</b><span>c. 300–1500</span></a>
+<a href="#early-modern" style="--accent:#3d6074"><b>Early modern</b><span>c. 1500–1750</span></a>
+<a href="#enlightenment" style="--accent:#76566d"><b>Enlightenment</b><span>c. 1739–1830</span></a>
+<a href="#nineteenth-century" style="--accent:#84601e"><b>19th century</b><span>c. 1818–1900</span></a>
+<a href="#contemporary" style="--accent:#3e6267"><b>20th c. to today</b><span>c. 1879–present</span></a></nav></div>
+    <div id="question-picker" hidden><h2>Follow a question</h2><div class="questions" role="group" aria-label="Topics"></div></div>
+  </aside>
+  <div class="reader">
+    <form class="search" role="search" hidden>
+      <label for="search">Search all eras</label>
+      <input id="search" type="search" placeholder="Try Plato, free will or justice" autocomplete="off">
+    </form>
+    <div class="result" hidden><p id="status" role="status"></p><p id="trail" hidden></p></div>
+    <div id="timeline"><section class="era" id="ancient" style="--accent:#38644a" aria-labelledby="ancient-title"><header class="chapter-head"><div class="chapter-line"><p class="eyebrow">Ancient <span>·</span> c. 600 BCE–300 CE</p><a class="change" href="#browse" hidden>Change era</a></div><h2 id="ancient-title">Origins &amp; the good life</h2><p>Greek and Roman thinkers ask what the world is made of, how to reason and how to live.</p><p class="start"><b>Start here</b> Start with Plato and Aristotle, then compare Stoic and Epicurean answers to what makes life good.</p></header>
+<section class="group"><h3>What is the world made of?</h3>
+<details data-topics="Reality" data-keywords="">
+<summary><span class="entry-main"><strong>Milesian natural philosophy</strong><span class="thinker">Thales</span></span><span class="when">c. 600 BCE</span><span class="chevron" aria-hidden="true"></span></summary>
+<div class="entry-body"><p class="claim">Ancient reports credit Thales with proposing water as the underlying principle of things.</p><h4>The argument</h4><p>Aristotle reports that Thales treated water as a fundamental source or principle. Aristotle conjectures that Thales may have noticed how nourishment and seeds depend on moisture. No writings by Thales survive, so his reasoning is uncertain.</p><h4>Try it</h4><p>Compare explaining a drought through the behavior of water with explaining it as a divine decision. What makes the first explanation open to investigation, even if the proposed theory is wrong?</p><footer><p><b>Read</b> <cite>Aristotle, Metaphysics I</cite></p><p class="tags">Reality</p></footer></div></details>
+<details data-topics="Reality" data-keywords="">
+<summary><span class="entry-main"><strong>Change and order</strong><span class="thinker">Heraclitus</span></span><span class="when">c. 500 BCE</span><span class="chevron" aria-hidden="true"></span></summary>
+<div class="entry-body"><p class="claim">The world is marked by change and tension, yet an intelligible order, the logos, runs through it.</p><h4>The argument</h4><p>Heraclitus pairs processes that appear opposed, such as waking and sleeping, to show how they belong to one intelligible pattern. His river imagery suggests that a thing can persist through the ongoing replacement of its parts.</p><h4>Try it</h4><p>A river keeps its course while new water flows through it. Would a city whose inhabitants all change over several generations remain the same city in the same sense?</p><footer><p><b>Read</b> <cite>Fragments</cite></p><p class="tags">Reality</p></footer></div></details>
+<details data-topics="Reality" data-keywords="">
+<summary><span class="entry-main"><strong>Being</strong><span class="thinker">Parmenides</span></span><span class="when">c. 480 BCE</span><span class="chevron" aria-hidden="true"></span></summary>
+<div class="entry-body"><p class="claim">A strict account of what is rules out coming into being from what is not, putting ordinary appearances of change under pressure.</p><h4>The argument</h4><p>Parmenides reasons that thought and speech must concern what is. If coming into being required something to arise from what is not, it would require us to make sense of nonbeing. His poem contrasts this argument with an account of the changing world mortals perceive.</p><h4>Try it</h4><p>A seed becomes a tree. Does that require something to come from nothing, or can it be explained as the transformation of what already exists? Later thinkers such as the atomists sought ways to preserve change without absolute creation.</p><footer><p><b>Read</b> <cite>On Nature</cite></p><p class="tags">Reality</p></footer></div></details>
+<details data-topics="Reality" data-keywords="">
+<summary><span class="entry-main"><strong>Atomism</strong><span class="thinker">Leucippus &amp; Democritus</span></span><span class="when">5th c. BCE</span><span class="chevron" aria-hidden="true"></span></summary>
+<div class="entry-body"><p class="claim">Bodies and their changes can be explained by indivisible atoms moving and rearranging in empty space.</p><h4>The argument</h4><p>The atomists distinguish stable constituents from changing combinations. Differences in shape, arrangement and position can account for the many things we encounter, while empty space makes motion possible.</p><h4>Try it</h4><p>Think of the same pieces forming different mosaics. The pattern is new even though the pieces survive. Could this kind of explanation account for felt qualities such as sweetness or pain?</p><footer><p><b>Read</b> <cite>Fragments and testimonies</cite></p><p class="tags">Reality</p></footer></div></details>
+<details data-topics="Knowledge" data-keywords="">
+<summary><span class="entry-main"><strong>Sophistic debate</strong><span class="thinker">Protagoras</span></span><span class="when">5th c. BCE</span><span class="chevron" aria-hidden="true"></span></summary>
+<div class="entry-body"><p class="claim">His claim that a human being is the measure of things raises the question of whether truth depends on the perceiver.</p><h4>The argument</h4><p>Plato presents Protagoras as challenging the idea that there is a single appearance-independent answer to every question. Plato also explores whether even a relativist can prefer the judgment of an expert who makes outcomes better.</p><h4>Try it</h4><p>A breeze feels cold to one person and warm to another. Both reports may be valid descriptions of experience. Would the same reasoning work for claims about justice or arithmetic?</p><footer><p><b>Read</b> <cite>Plato, Theaetetus</cite></p><p class="tags">Knowledge</p></footer></div></details>
+</section>
+<section class="group"><h3>What can reason teach us?</h3>
+<details data-topics="Ethics" data-keywords="">
+<summary><span class="entry-main"><strong>Socratic inquiry</strong><span class="thinker">Socrates</span></span><span class="when">399 BCE</span><span class="chevron" aria-hidden="true"></span></summary>
+<div class="entry-body"><p class="claim">Examining our beliefs about virtue exposes contradictions and helps us care for the kind of person we become.</p><h4>The argument</h4><p>In Plato’s dialogues, Socrates often asks someone to define a virtue and then tests that definition against examples and the person’s other commitments. The exchange can end in puzzlement, showing where further inquiry is needed.</p><h4>Try it</h4><p>If courage means never retreating, does a soldier who retreats to protect others lack courage? Try revising the definition so it explains both cases.</p><footer><p><b>Read</b> <cite>Plato, Apology</cite></p><p class="tags">Ethics</p></footer></div></details>
+<details data-topics="Reality" data-keywords="allegory cave platonism">
+<summary><span class="entry-main"><strong>Theory of Forms</strong><span class="thinker">Plato</span></span><span class="when">c. 380 BCE</span><span class="chevron" aria-hidden="true"></span></summary>
+<div class="entry-body"><p class="claim">Stable, intelligible Forms explain how we can know things such as justice even when particular examples are imperfect.</p><h4>The argument</h4><p>In the Republic, Plato distinguishes sensible particulars from intelligible objects such as Equality or the Good. The cave allegory depicts education as a reorientation of attention toward what makes appearances intelligible.</p><h4>Try it</h4><p>Two sticks can look equal from one angle and unequal from another. The standard of equality lets us ask which impression is correct. Does using that standard commit us to an independently existing Form?</p><footer><p><b>Read</b> <cite>Republic, Books VI–VII</cite></p><p class="tags">Reality</p></footer></div></details>
+<details data-topics="Ethics, Logic, Reality" data-keywords="">
+<summary><span class="entry-main"><strong>Virtue ethics &amp; syllogistic logic</strong><span class="thinker">Aristotle</span></span><span class="when">4th c. BCE</span><span class="chevron" aria-hidden="true"></span></summary>
+<div class="entry-body"><p class="claim">Flourishing is activity in accordance with virtue over a complete life. In logic, conclusions follow from premises by virtue of their form.</p><h4>The argument</h4><p>Virtues grow through practice and involve judgment about what a situation calls for. Aristotle also studies valid patterns of inference. In a syllogism, the arrangement of its terms guarantees the conclusion if the premises are true.</p><h4>Try it</h4><p>Courage may lie between rashness and cowardice, with the right response depending on the danger. By contrast, if every mammal breathes and every whale is a mammal, it follows that every whale breathes. Why does the first judgment require a different kind of reasoning?</p><footer><p><b>Read</b> <cite>Nicomachean Ethics and Prior Analytics</cite></p><p class="tags">Ethics, Logic, Reality</p></footer></div></details>
+</section>
+<section class="group"><h3>What makes a life good?</h3>
+<details data-topics="Ethics" data-keywords="">
+<summary><span class="entry-main"><strong>Cynicism</strong><span class="thinker">Diogenes of Sinope</span></span><span class="when">4th c. BCE</span><span class="chevron" aria-hidden="true"></span></summary>
+<div class="entry-body"><p class="claim">A life of simplicity and self-sufficiency can expose the hold of status and social convention.</p><h4>The argument</h4><p>Stories about Diogenes portray him using public acts to challenge what people considered respectable. Reducing his needs was a way to depend less on wealth, rank and social approval.</p><h4>Try it</h4><p>If a promotion buys status but leaves you dependent on praise or luxury, has it made you freer? How much of Diogenes’s independence could a family or community reasonably practice?</p><footer><p><b>Read</b> <cite>Diogenes Laertius, Lives VI</cite></p><p class="tags">Ethics</p></footer></div></details>
+<details data-topics="Ethics" data-keywords="happiness hedonism">
+<summary><span class="entry-main"><strong>Epicureanism</strong><span class="thinker">Epicurus</span></span><span class="when">c. 300 BCE</span><span class="chevron" aria-hidden="true"></span></summary>
+<div class="entry-body"><p class="claim">A pleasurable life depends on freedom from bodily pain and mental disturbance, cultivated through friendship and moderation.</p><h4>The argument</h4><p>Epicurus distinguishes natural and necessary desires from desires such as unlimited wealth or fame. Learning which desires can really be satisfied reduces anxiety. He also argues that death cannot be experienced as a harm by the person who dies.</p><h4>Try it</h4><p>A plain meal with friends may bring steadier satisfaction than a luxury that creates a new expense or worry. Which desires become easier to manage once you stop treating them as needs?</p><footer><p><b>Read</b> <cite>Letter to Menoeceus</cite></p><p class="tags">Ethics</p></footer></div></details>
+<details data-topics="Ethics" data-keywords="resilience free will">
+<summary><span class="entry-main"><strong>Stoicism</strong><span class="thinker">Zeno, Epictetus &amp; Marcus Aurelius</span></span><span class="when">c. 300 BCE onward</span><span class="chevron" aria-hidden="true"></span></summary>
+<div class="entry-body"><p class="claim">Virtue is the good that matters most. Focus your judgment and effort on what is up to you.</p><h4>The argument</h4><p>Epictetus distinguishes judgments and choices, which are up to us, from external outcomes such as reputation. Stoic practice involves pausing before treating an initial impression as a reliable verdict about what is good or bad.</p><h4>Try it</h4><p>Before an interview, you can prepare diligently and answer honestly. The hiring decision depends partly on others. What would it mean to take the outcome seriously without treating it as the measure of your character?</p><footer><p><b>Read</b> <cite>Epictetus, Enchiridion</cite></p><p class="tags">Ethics</p></footer></div></details>
+</section>
+<section class="group"><h3>Where does inquiry lead?</h3>
+<details data-topics="Knowledge" data-keywords="">
+<summary><span class="entry-main"><strong>Pyrrhonian skepticism</strong><span class="thinker">Sextus Empiricus</span></span><span class="when">c. 200 CE</span><span class="chevron" aria-hidden="true"></span></summary>
+<div class="entry-body"><p class="claim">When opposing arguments seem equally strong, suspend judgment and continue investigating.</p><h4>The argument</h4><p>Sextus describes the skeptic as still investigating. Where competing accounts seem equally persuasive, they withhold assent. Ordinary appearances, habits and practical needs can still guide everyday action.</p><h4>Try it</h4><p>You can drink honey that tastes sweet without settling whether sweetness is intrinsic to the honey. How far can you use that distinction in medicine or politics, where decisions cannot always wait?</p><footer><p><b>Read</b> <cite>Outlines of Pyrrhonism</cite></p><p class="tags">Knowledge</p></footer></div></details>
+<details data-topics="Reality, Religion" data-keywords="">
+<summary><span class="entry-main"><strong>Neoplatonism</strong><span class="thinker">Plotinus</span></span><span class="when">c. 250 CE</span><span class="chevron" aria-hidden="true"></span></summary>
+<div class="entry-body"><p class="claim">Intellect and soul proceed from the One, an ultimate principle beyond ordinary being.</p><h4>The argument</h4><p>Plotinus places the One beyond even the distinction between thinker and object of thought. Intellect contains intelligible Forms, and Soul gives order to the sensible world. This dependence is a metaphysical order, not a series of events in time.</p><h4>Try it</h4><p>Think of many mathematical truths depending on a simpler principle without using it up. The analogy helps with dependence but leaves a puzzle. How can absolute unity give rise to multiplicity at all?</p><footer><p><b>Read</b> <cite>Enneads</cite></p><p class="tags">Reality, Religion</p></footer></div></details>
+</section>
+<a class="next" href="#medieval"><span>Next era</span><b>Medieval</b></a>
+</section>
+<section class="era" id="medieval" style="--accent:#884d2f" aria-labelledby="medieval-title"><header class="chapter-head"><div class="chapter-line"><p class="eyebrow">Medieval <span>·</span> c. 300–1500</p><a class="change" href="#browse" hidden>Change era</a></div><h2 id="medieval-title">Faith &amp; reason</h2><p>Greek philosophy is developed and transmitted across Arabic, Greek, Hebrew and Latin intellectual traditions.</p><p class="start"><b>Start here</b> Read Avicenna and Anselm side by side to see two different ways of arguing that God exists.</p></header>
+<section class="group"><h3>Faith and the nature of existence</h3>
+<details data-topics="Religion, Ethics" data-keywords="">
+<summary><span class="entry-main"><strong>Christian Platonism</strong><span class="thinker">Augustine</span></span><span class="when">c. 400</span><span class="chevron" aria-hidden="true"></span></summary>
+<div class="entry-body"><p class="claim">Human restlessness reflects a desire for God. Evil is a deprivation of good rather than a substance of its own.</p><h4>The argument</h4><p>Augustine treats evil as a deficiency in something otherwise good. He also links wrongdoing to disordered love, in which a real but lesser good is prized above a more important one.</p><h4>Try it</h4><p>Blindness is a loss of a capacity in a being that ordinarily sees. Likewise, a betrayal can have real consequences even if its wrongness consists in a failure of loyalty. What kinds of suffering put this account under pressure?</p><footer><p><b>Read</b> <cite>Confessions, Books I and VII</cite></p><p class="tags">Religion, Ethics</p></footer></div></details>
+<details data-topics="Reality, Religion" data-keywords="">
+<summary><span class="entry-main"><strong>Essence and existence</strong><span class="thinker">Avicenna (Ibn Sina)</span></span><span class="when">c. 1020</span><span class="chevron" aria-hidden="true"></span></summary>
+<div class="entry-body"><p class="claim">What a contingent thing is does not explain that it exists. Contingent existence ultimately depends on a Necessary Existent.</p><h4>The argument</h4><p>Avicenna distinguishes the nature of a possible thing from its actual existence. Since its nature alone cannot make it exist, an explanation must appeal to a cause and ultimately to what exists necessarily in itself.</p><h4>Try it</h4><p>You can understand what a house is without finding a house on a particular plot. Existing houses call for further explanation. Does explaining every link in a chain explain why the chain exists?</p><footer><p><b>Read</b> <cite>The Healing: Metaphysics</cite></p><p class="tags">Reality, Religion</p></footer></div></details>
+<details data-topics="Religion, Logic" data-keywords="">
+<summary><span class="entry-main"><strong>Ontological argument</strong><span class="thinker">Anselm</span></span><span class="when">1077–78</span><span class="chevron" aria-hidden="true"></span></summary>
+<div class="entry-body"><p class="claim">Anselm argues that the greatest conceivable being cannot exist only in the understanding, since existing in reality would be greater.</p><h4>The argument</h4><p>Anselm starts with a concept of God and argues that supposing its object exists in thought alone leads to a contradiction. Gaunilo’s reply uses a seemingly parallel argument about a perfect island to challenge the inference.</p><h4>Try it</h4><p>Does defining the best possible island give you any reason to think it is real? Consider whether the idea of a greatest possible being works differently from the idea of a greatest island.</p><footer><p><b>Read</b> <cite>Proslogion</cite></p><p class="tags">Religion, Logic</p></footer></div></details>
+</section>
+<section class="group"><h3>Reading, reasoning and revelation</h3>
+<details data-topics="Religion, Knowledge" data-keywords="">
+<summary><span class="entry-main"><strong>Aristotelian commentary</strong><span class="thinker">Averroes (Ibn Rushd)</span></span><span class="when">c. 1179</span><span class="chevron" aria-hidden="true"></span></summary>
+<div class="entry-body"><p class="claim">Demonstrative philosophy can be legitimate within Islam, and apparent conflicts with scripture can call for interpretation.</p><h4>The argument</h4><p>Averroes argues that scripture can invite qualified readers to investigate nature through demonstration. Where an established result conflicts with a text’s apparent meaning, interpretive work can reconcile the two.</p><h4>Try it</h4><p>Imagine a literal reading that conflicts with a well-supported astronomical conclusion. What standard of proof should be met before giving up the literal reading?</p><footer><p><b>Read</b> <cite>Decisive Treatise</cite></p><p class="tags">Religion, Knowledge</p></footer></div></details>
+<details data-topics="Religion, Logic" data-keywords="">
+<summary><span class="entry-main"><strong>Negative theology</strong><span class="thinker">Maimonides</span></span><span class="when">c. 1190</span><span class="chevron" aria-hidden="true"></span></summary>
+<div class="entry-body"><p class="claim">Because God exceeds ordinary categories, we can speak more safely about what God is not than ascribe human-like attributes to God.</p><h4>The argument</h4><p>Maimonides worries that familiar positive attributes can imply composition or human limitations if applied to God. Denying a limitation avoids some misleading claims while leaving room to speak about divine actions.</p><h4>Try it</h4><p>Calling God wise might suggest a person who learns and reasons. Saying God is free from ignorance avoids that picture. How much do we learn from a description framed by exclusions?</p><footer><p><b>Read</b> <cite>Guide for the Perplexed</cite></p><p class="tags">Religion, Logic</p></footer></div></details>
+<details data-topics="Religion, Ethics" data-keywords="">
+<summary><span class="entry-main"><strong>Scholasticism &amp; natural law</strong><span class="thinker">Thomas Aquinas</span></span><span class="when">c. 1270</span><span class="chevron" aria-hidden="true"></span></summary>
+<div class="entry-body"><p class="claim">Reason can investigate some truths about God and discern basic goods that give human action moral direction.</p><h4>The argument</h4><p>Aquinas distinguishes truths reason can investigate from mysteries known through revelation. His natural law theory begins from practical reason’s grasp of basic goods, including life, knowledge and social living.</p><h4>Try it</h4><p>A law that makes travel safer can serve the common good. What if obeying it in an emergency puts a life at risk? Consider why practical judgment matters even when a rule has a good purpose.</p><footer><p><b>Read</b> <cite>Summa Theologiae</cite></p><p class="tags">Religion, Ethics</p></footer></div></details>
+</section>
+<section class="group"><h3>The status of universals</h3>
+<details data-topics="Reality, Logic" data-keywords="">
+<summary><span class="entry-main"><strong>Nominalism</strong><span class="thinker">William of Ockham</span></span><span class="when">c. 1320</span><span class="chevron" aria-hidden="true"></span></summary>
+<div class="entry-body"><p class="claim">Individual things exist outside the mind. General concepts can signify many individuals without a universal thing shared among them.</p><h4>The argument</h4><p>Ockham takes generality to lie in how terms and concepts signify. The concept of a dog applies to many animals without requiring an additional entity called dogness that is literally present in each.</p><h4>Try it</h4><p>A terrier and a greyhound differ considerably, yet both fall under the term dog. What makes such a grouping more than a convenient label we happen to use?</p><footer><p><b>Read</b> <cite>Summa Logicae</cite></p><p class="tags">Reality, Logic</p></footer></div></details>
+</section>
+<a class="next" href="#early-modern"><span>Next era</span><b>Early modern</b></a>
+</section>
+<section class="era" id="early-modern" style="--accent:#3d6074" aria-labelledby="early-modern-title"><header class="chapter-head"><div class="chapter-line"><p class="eyebrow">Renaissance &amp; early modern <span>·</span> c. 1500–1750</p><a class="change" href="#browse" hidden>Change era</a></div><h2 id="early-modern-title">Certainty &amp; authority</h2><p>Humanism, religious conflict and the rise of experimental science reshape old questions about authority and evidence.</p><p class="start"><b>Start here</b> Put Descartes and Locke side by side. How much of what we know depends on experience?</p></header>
+<section class="group"><h3>Renaissance challenges to authority</h3>
+<details data-topics="Politics, Ethics" data-keywords="">
+<summary><span class="entry-main"><strong>Political realism</strong><span class="thinker">Niccolò Machiavelli</span></span><span class="when">1513</span><span class="chevron" aria-hidden="true"></span></summary>
+<div class="entry-body"><p class="claim">Rulers sometimes face a conflict between conventional virtue and the actions needed to maintain political power.</p><h4>The argument</h4><p>Machiavelli asks how rulers hold power in a world of unreliable allies, changing fortune and competing interests. A ruler’s capacity to adapt, which he calls virtù, can matter more than a fixed reputation for conventional goodness.</p><h4>Try it</h4><p>A leader has to decide whether to keep an agreement after an ally breaks it. What happens to trust if leaders regularly use necessity to excuse breaking promises?</p><footer><p><b>Read</b> <cite>The Prince</cite></p><p class="tags">Politics, Ethics</p></footer></div></details>
+<details data-topics="Knowledge, Ethics" data-keywords="">
+<summary><span class="entry-main"><strong>Renaissance skepticism</strong><span class="thinker">Michel de Montaigne</span></span><span class="when">1580</span><span class="chevron" aria-hidden="true"></span></summary>
+<div class="entry-body"><p class="claim">Attending to diverse customs and our own fallibility loosens the grip of confident judgments.</p><h4>The argument</h4><p>Montaigne turns observation inward, using his own changing habits and opinions as material for inquiry. Comparing societies reveals how easily local conventions can be mistaken for universal truths.</p><h4>Try it</h4><p>A visitor judges another society’s table manners while overlooking how strange their own customs seem to others. Which of your judgments would survive that reversal of perspective?</p><footer><p><b>Read</b> <cite>Essays</cite></p><p class="tags">Knowledge, Ethics</p></footer></div></details>
+</section>
+<section class="group"><h3>New methods for finding truth</h3>
+<details data-topics="Knowledge, Science" data-keywords="">
+<summary><span class="entry-main"><strong>Experimental inquiry</strong><span class="thinker">Francis Bacon</span></span><span class="when">1620</span><span class="chevron" aria-hidden="true"></span></summary>
+<div class="entry-body"><p class="claim">Systematic observation and experiment can correct habitual errors and improve inquiry into nature.</p><h4>The argument</h4><p>Bacon calls recurring sources of error idols. They include tendencies common to humans, individual biases, misleading uses of language and inherited systems of thought. He proposes comparing cases systematically, including cases where an expected effect is absent.</p><h4>Try it</h4><p>If you think a soil additive improves growth, compare similar plants with and without it and record failures too. What would your investigation miss if you only collected successful cases?</p><footer><p><b>Read</b> <cite>Novum Organum</cite></p><p class="tags">Knowledge, Science</p></footer></div></details>
+<details data-topics="Knowledge, Mind, Reality" data-keywords="">
+<summary><span class="entry-main"><strong>Rationalism &amp; dualism</strong><span class="thinker">René Descartes</span></span><span class="when">1641</span><span class="chevron" aria-hidden="true"></span></summary>
+<div class="entry-body"><p class="claim">Radical doubt leaves the existence of the thinker certain while they think. Mind and body are distinct kinds of substance.</p><h4>The argument</h4><p>Descartes tests beliefs by imagining reasons to doubt them, even the possibility of systematic deception. The act of doubting still requires a thinker. He later argues that thought and extension are distinct and asks how mind and body can form a union.</p><h4>Try it</h4><p>You might dream you are walking while your body lies still, yet the dreaming is itself an experience. Does certainty about the experience show that it could exist apart from the brain?</p><footer><p><b>Read</b> <cite>Meditations</cite></p><p class="tags">Knowledge, Mind, Reality</p></footer></div></details>
+</section>
+<section class="group"><h3>Nature, mind and the state</h3>
+<details data-topics="Politics" data-keywords="">
+<summary><span class="entry-main"><strong>Social contract</strong><span class="thinker">Thomas Hobbes</span></span><span class="when">1651</span><span class="chevron" aria-hidden="true"></span></summary>
+<div class="entry-body"><p class="claim">People authorize a sovereign to secure peace and protect themselves from the dangers of life without common authority.</p><h4>The argument</h4><p>In Hobbes’s state of nature, people lack a common authority to enforce agreements. Even those who prefer peace have reason to distrust others. The contract creates a sovereign capable of making cooperation safer.</p><h4>Try it</h4><p>Two neighbors both want to stop guarding their property at night, but each fears what happens if only one stops. What makes their agreement credible, and how much power should an enforcer receive?</p><footer><p><b>Read</b> <cite>Leviathan</cite></p><p class="tags">Politics</p></footer></div></details>
+<details data-topics="Reality, Religion, Ethics" data-keywords="determinism free will pantheism">
+<summary><span class="entry-main"><strong>Substance monism</strong><span class="thinker">Baruch Spinoza</span></span><span class="when">1677</span><span class="chevron" aria-hidden="true"></span></summary>
+<div class="entry-body"><p class="claim">There is one substance, God or Nature. Understanding the causes of our emotions can make us more active and free.</p><h4>The argument</h4><p>For Spinoza, finite things are modes of one substance. Thought and extension are attributes through which we understand it. Freedom increases as we act from more adequate understanding of what moves us.</p><h4>Try it</h4><p>Understanding why a remark makes you angry may help you respond deliberately. If your new understanding also has causes, in what sense have you become freer?</p><footer><p><b>Read</b> <cite>Ethics</cite></p><p class="tags">Reality, Religion, Ethics</p></footer></div></details>
+<details data-topics="Knowledge, Politics" data-keywords="">
+<summary><span class="entry-main"><strong>Empiricism &amp; liberalism</strong><span class="thinker">John Locke</span></span><span class="when">1689–90</span><span class="chevron" aria-hidden="true"></span></summary>
+<div class="entry-body"><p class="claim">Ideas arise through sensation and reflection. Legitimate government rests on consent and protects natural rights.</p><h4>The argument</h4><p>Locke rejects innate speculative ideas and traces their materials to sensation and reflection on mental operations. In politics, people leave the state of nature partly to obtain impartial judgment and enforcement of rights.</p><h4>Try it</h4><p>You learn color through seeing and can form the idea of remembering by attending to your own mind. In a dispute over property, why might both sides prefer an independent judge to enforcing their claims themselves?</p><footer><p><b>Read</b> <cite>Essay Concerning Human Understanding and Second Treatise</cite></p><p class="tags">Knowledge, Politics</p></footer></div></details>
+<details data-topics="Reality, Mind" data-keywords="">
+<summary><span class="entry-main"><strong>Immaterialism</strong><span class="thinker">George Berkeley</span></span><span class="when">1710</span><span class="chevron" aria-hidden="true"></span></summary>
+<div class="entry-body"><p class="claim">Ordinary objects consist of ideas perceived by minds. Berkeley rejects material substance as an explanation of them.</p><h4>The argument</h4><p>Berkeley argues that sensible qualities such as color and shape are known as perceptions. A stable world is possible because perceptions follow regular patterns sustained by God, rather than being invented at will by each observer.</p><h4>Try it</h4><p>A tree is still there when you leave the garden. Berkeley can appeal to divine perception and stable patterns of experience. Would this explain everything you expect the existence of the tree to explain?</p><footer><p><b>Read</b> <cite>Principles of Human Knowledge</cite></p><p class="tags">Reality, Mind</p></footer></div></details>
+<details data-topics="Reality, Logic" data-keywords="">
+<summary><span class="entry-main"><strong>Monads &amp; sufficient reason</strong><span class="thinker">G. W. Leibniz</span></span><span class="when">1714</span><span class="chevron" aria-hidden="true"></span></summary>
+<div class="entry-body"><p class="claim">Reality consists fundamentally of simple substances, and there must be a sufficient reason why things are as they are.</p><h4>The argument</h4><p>Leibniz’s monads have no parts and express the universe from different perspectives. Their states correspond through a pre-established harmony. The principle of sufficient reason asks why this arrangement exists rather than another.</p><h4>Try it</h4><p>Imagine two clocks that always agree without influencing one another because they were set together. What would distinguish an underlying harmony from direct interaction?</p><footer><p><b>Read</b> <cite>Monadology</cite></p><p class="tags">Reality, Logic</p></footer></div></details>
+</section>
+<a class="next" href="#enlightenment"><span>Next era</span><b>Enlightenment</b></a>
+</section>
+<section class="era" id="enlightenment" style="--accent:#76566d" aria-labelledby="enlightenment-title"><header class="chapter-head"><div class="chapter-line"><p class="eyebrow">Enlightenment &amp; revolutions <span>·</span> c. 1739–1830</p><a class="change" href="#browse" hidden>Change era</a></div><h2 id="enlightenment-title">Rights &amp; obligations</h2><p>Debates about human nature and the limits of knowledge sit alongside disputes over sovereignty and equal standing.</p><p class="start"><b>Start here</b> Compare Bentham and Kant on whether an action should be judged by its outcome or its guiding principle.</p></header>
+<section class="group"><h3>The limits of knowledge and freedom</h3>
+<details data-topics="Knowledge, Science, Ethics" data-keywords="">
+<summary><span class="entry-main"><strong>Empiricism &amp; induction</strong><span class="thinker">David Hume</span></span><span class="when">1739–48</span><span class="chevron" aria-hidden="true"></span></summary>
+<div class="entry-body"><p class="claim">Experience leads us to expect patterns to continue, but reasoning alone cannot establish that the future will resemble the past.</p><h4>The argument</h4><p>Hume divides relations of ideas, such as mathematical truths, from matters of fact. Inference beyond what we observe depends on expectations formed through repeated experience. Using past success to justify induction already assumes that past success is relevant to the future.</p><h4>Try it</h4><p>Bread has nourished you every day so far. What justifies expecting the next loaf to nourish you? Compare what you can prove with what you would sensibly do.</p><footer><p><b>Read</b> <cite>An Enquiry Concerning Human Understanding</cite></p><p class="tags">Knowledge, Science, Ethics</p></footer></div></details>
+<details data-topics="Mind, Ethics" data-keywords="free will determinism">
+<summary><span class="entry-main"><strong>Compatibilism</strong><span class="thinker">David Hume</span></span><span class="when">1748</span><span class="chevron" aria-hidden="true"></span></summary>
+<div class="entry-body"><p class="claim">Freedom can coexist with causal regularity. A person acts freely when they can act as they choose without external constraint.</p><h4>The argument</h4><p>Hume treats necessity in human action as the regular connection between motives and conduct. He defines liberty in terms of being able to act according to one’s will, so an action can have causes and still count as free.</p><h4>Try it</h4><p>Walking out of a room because you want to leave differs from being pushed out. Both events have causes. What changes when manipulation influences what you want in the first place?</p><footer><p><b>Read</b> <cite>An Enquiry Concerning Human Understanding, Section VIII</cite></p><p class="tags">Mind, Ethics</p></footer></div></details>
+</section>
+<section class="group"><h3>Citizenship, duty and utility</h3>
+<details data-topics="Politics" data-keywords="">
+<summary><span class="entry-main"><strong>Popular sovereignty</strong><span class="thinker">Jean-Jacques Rousseau</span></span><span class="when">1762</span><span class="chevron" aria-hidden="true"></span></summary>
+<div class="entry-body"><p class="claim">Citizens can be free under laws they give themselves collectively when those laws express the common interest.</p><h4>The argument</h4><p>Rousseau distinguishes the general will, directed toward the common interest, from the sum of everyone’s private preferences. A law can express collective self-rule when citizens deliberate as equals about conditions that apply to them all.</p><h4>Try it</h4><p>A neighborhood votes on rules for shared water. Each household wants a private exception, yet all benefit from a reliable supply. What would help the group identify a genuinely common interest?</p><footer><p><b>Read</b> <cite>The Social Contract</cite></p><p class="tags">Politics</p></footer></div></details>
+<details data-topics="Knowledge, Ethics, Reality" data-keywords="deontology categorical imperative transcendental idealism">
+<summary><span class="entry-main"><strong>Critical philosophy &amp; duty</strong><span class="thinker">Immanuel Kant</span></span><span class="when">1781–85</span><span class="chevron" aria-hidden="true"></span></summary>
+<div class="entry-body"><p class="claim">Space, time and basic concepts structure possible experience. Morally, act on principles you could will as universal laws.</p><h4>The argument</h4><p>Kant asks which conditions make experience and objective judgment possible, including space, time and concepts such as causality. In ethics, he tests the maxim behind an action by asking whether it could serve as a law for everyone.</p><h4>Try it</h4><p>If everyone made promises with the intention of breaking them whenever convenient, the practice of relying on promises would collapse. What maxim best describes your action in a difficult case?</p><footer><p><b>Read</b> <cite>Critique of Pure Reason and Groundwork</cite></p><p class="tags">Knowledge, Ethics, Reality</p></footer></div></details>
+<details data-topics="Ethics, Politics" data-keywords="">
+<summary><span class="entry-main"><strong>Classical utilitarianism</strong><span class="thinker">Jeremy Bentham</span></span><span class="when">1789</span><span class="chevron" aria-hidden="true"></span></summary>
+<div class="entry-body"><p class="claim">Judge actions and institutions by their tendencies to increase pleasure and reduce suffering for those affected.</p><h4>The argument</h4><p>Bentham proposes evaluating pleasures and pains through features such as intensity, duration and how many people are affected. This makes the effects of laws on ordinary people a direct part of political evaluation.</p><h4>Try it</h4><p>A transport policy saves many commuters a few minutes but imposes severe noise on a small neighborhood. How should the benefit to the many weigh against the burden on the few?</p><footer><p><b>Read</b> <cite>Introduction to the Principles of Morals and Legislation</cite></p><p class="tags">Ethics, Politics</p></footer></div></details>
+</section>
+<section class="group"><h3>Taste, equality and historical change</h3>
+<details data-topics="Aesthetics" data-keywords="">
+<summary><span class="entry-main"><strong>Aesthetic judgment</strong><span class="thinker">Immanuel Kant</span></span><span class="when">1790</span><span class="chevron" aria-hidden="true"></span></summary>
+<div class="entry-body"><p class="claim">A judgment of beauty arises from pleasure without a desire to possess the object, yet it asks others to agree.</p><h4>The argument</h4><p>In Kant’s account, judging something beautiful involves a pleasure independent of the wish to possess or use it. The judgment arises from subjective experience yet makes a claim on others’ agreement without applying a fixed rule for beauty.</p><h4>Try it</h4><p>You can admire a wildflower without wanting to pick it. When you say it is beautiful, what are you asking others to recognize that goes beyond reporting your own taste?</p><footer><p><b>Read</b> <cite>Critique of Judgment</cite></p><p class="tags">Aesthetics</p></footer></div></details>
+<details data-topics="Politics, Ethics" data-keywords="">
+<summary><span class="entry-main"><strong>Feminist political philosophy</strong><span class="thinker">Mary Wollstonecraft</span></span><span class="when">1792</span><span class="chevron" aria-hidden="true"></span></summary>
+<div class="entry-body"><p class="claim">Women’s apparent dependence reflects social arrangements and unequal education. Equal access to education is essential to autonomy.</p><h4>The argument</h4><p>Wollstonecraft argues that education designed to win approval and dependence limits the development of reason and independence. This undercuts the claim that social inequality simply reflects natural differences in ability.</p><h4>Try it</h4><p>If girls are rewarded for pleasing others and boys for exercising judgment, later differences tell us something about training. What would count as a fair test of the capacities claimed to be innate?</p><footer><p><b>Read</b> <cite>A Vindication of the Rights of Woman</cite></p><p class="tags">Politics, Ethics</p></footer></div></details>
+<details data-topics="Reality, Politics, Knowledge" data-keywords="">
+<summary><span class="entry-main"><strong>German idealism &amp; dialectic</strong><span class="thinker">G. W. F. Hegel</span></span><span class="when">1807–21</span><span class="chevron" aria-hidden="true"></span></summary>
+<div class="entry-body"><p class="claim">Forms of thought and social life develop through tensions internal to them. Freedom takes shape in institutions and relations of recognition.</p><h4>The argument</h4><p>Hegel examines how a position can become unstable on its own terms and give rise to a more developed one. In the struggle for recognition, a master seeks confirmation from someone whose independent standing he denies.</p><h4>Try it</h4><p>Can a boss gain meaningful respect from workers who have no room to disagree? The example helps explain why Hegel ties freedom to forms of reciprocal recognition.</p><footer><p><b>Read</b> <cite>Phenomenology of Spirit and Philosophy of Right</cite></p><p class="tags">Reality, Politics, Knowledge</p></footer></div></details>
+</section>
+<a class="next" href="#nineteenth-century"><span>Next era</span><b>19th century</b></a>
+</section>
+<section class="era" id="nineteenth-century" style="--accent:#84601e" aria-labelledby="nineteenth-century-title"><header class="chapter-head"><div class="chapter-line"><p class="eyebrow">Nineteenth century <span>·</span> c. 1818–1900</p><a class="change" href="#browse" hidden>Change era</a></div><h2 id="nineteenth-century-title">Freedom, history &amp; values</h2><p>Philosophy turns toward economic life, individual commitment, social reform and the origins of moral values.</p><p class="start"><b>Start here</b> Read Marx and Nietzsche for two ways to investigate where familiar social arrangements and values come from.</p></header>
+<section class="group"><h3>Desire and commitment</h3>
+<details data-topics="Reality, Ethics" data-keywords="">
+<summary><span class="entry-main"><strong>Will &amp; pessimism</strong><span class="thinker">Arthur Schopenhauer</span></span><span class="when">1818</span><span class="chevron" aria-hidden="true"></span></summary>
+<div class="entry-body"><p class="claim">The world as we experience it expresses a restless striving. Compassion and aesthetic contemplation offer ways to loosen its grip.</p><h4>The argument</h4><p>Schopenhauer interprets desire as the expression of a striving that continually renews itself. Satisfaction is often temporary, while aesthetic attention can suspend the pressure to pursue our immediate ends.</p><h4>Try it</h4><p>Achieving a goal can bring relief followed quickly by a new ambition. Compare that cycle with being absorbed in a piece of music. Are there kinds of striving that escape his diagnosis?</p><footer><p><b>Read</b> <cite>The World as Will and Representation</cite></p><p class="tags">Reality, Ethics</p></footer></div></details>
+<details data-topics="Religion, Ethics" data-keywords="">
+<summary><span class="entry-main"><strong>Faith &amp; subjectivity</strong><span class="thinker">Søren Kierkegaard</span></span><span class="when">1843</span><span class="chevron" aria-hidden="true"></span></summary>
+<div class="entry-body"><p class="claim">Faith involves a personal commitment that objective argument alone cannot supply.</p><h4>The argument</h4><p>Through the pseudonymous author of Fear and Trembling, Kierkegaard considers Abraham’s willingness to sacrifice Isaac. The story presses on the tension between obligations that can be publicly justified and an individual’s claimed relation to God.</p><h4>Try it</h4><p>Imagine a person insisting that faith requires an act others see as morally wrong. What could distinguish a genuine religious commitment from self-deception?</p><footer><p><b>Read</b> <cite>Fear and Trembling</cite></p><p class="tags">Religion, Ethics</p></footer></div></details>
+</section>
+<section class="group"><h3>Society, power and liberty</h3>
+<details data-topics="Politics, Ethics" data-keywords="">
+<summary><span class="entry-main"><strong>Historical materialism</strong><span class="thinker">Karl Marx</span></span><span class="when">1845–67</span><span class="chevron" aria-hidden="true"></span></summary>
+<div class="entry-body"><p class="claim">How people organize production shapes social life. Under capitalism, workers produce more value than they receive in wages.</p><h4>The argument</h4><p>Marx asks how ownership and control of production shape class relations. His account of surplus value distinguishes the value workers create from the value of their labor power purchased in wages. He also examines how market exchange can hide social relations.</p><h4>Try it</h4><p>A coat appears on a shelf with a price tag. Trace back the labor, contracts and ownership behind it. Which of those relationships are visible in the act of buying it?</p><footer><p><b>Read</b> <cite>The German Ideology and Capital, Volume I</cite></p><p class="tags">Politics, Ethics</p></footer></div></details>
+<details data-topics="Ethics, Politics" data-keywords="">
+<summary><span class="entry-main"><strong>Liberty &amp; utilitarianism</strong><span class="thinker">John Stuart Mill</span></span><span class="when">1859–61</span><span class="chevron" aria-hidden="true"></span></summary>
+<div class="entry-body"><p class="claim">Preventing harm to others can justify restricting liberty. In evaluating happiness, the quality of pleasures also matters.</p><h4>The argument</h4><p>Mill defends individuality and open discussion partly because they allow people to learn and correct errors. His harm principle restricts coercion of competent adults. In ethics, he distinguishes higher and lower pleasures by appealing to experienced judges.</p><h4>Try it</h4><p>A government proposes banning a book that offends many readers. Does offense alone justify a ban? What changes if publication exposes a private person to a concrete and foreseeable harm?</p><footer><p><b>Read</b> <cite>On Liberty and Utilitarianism</cite></p><p class="tags">Ethics, Politics</p></footer></div></details>
+</section>
+<section class="group"><h3>What ideas do and where values come from</h3>
+<details data-topics="Knowledge, Science" data-keywords="">
+<summary><span class="entry-main"><strong>Pragmatism</strong><span class="thinker">C. S. Peirce, William James &amp; John Dewey</span></span><span class="when">1878 onward</span><span class="chevron" aria-hidden="true"></span></summary>
+<div class="entry-body"><p class="claim">Peirce clarifies ideas by their conceivable practical effects. James and Dewey develop distinct accounts of truth, experience and inquiry.</p><h4>The argument</h4><p>Peirce asks what observable effects would follow if a concept applied. James emphasizes how ideas are tested in experience, and Dewey sees inquiry as the work of transforming a troubling situation into one we can understand and act on.</p><h4>Try it</h4><p>If someone calls a material brittle, ask what difference that makes when it is bent, dropped or struck. Can differences in practice also clarify a disagreement about justice or meaning?</p><footer><p><b>Read</b> <cite>How to Make Our Ideas Clear and Pragmatism</cite></p><p class="tags">Knowledge, Science</p></footer></div></details>
+<details data-topics="Ethics, Politics" data-keywords="">
+<summary><span class="entry-main"><strong>Genealogy of morals</strong><span class="thinker">Friedrich Nietzsche</span></span><span class="when">1887</span><span class="chevron" aria-hidden="true"></span></summary>
+<div class="entry-body"><p class="claim">Moral values have histories. Asking how they arose reveals the motives and conflicts behind judgments that can seem timeless.</p><h4>The argument</h4><p>Nietzsche traces competing ways of valuing, including how resentment can transform the virtues of the powerful into objects of condemnation. Genealogy examines what a value expresses and how it gained authority.</p><h4>Try it</h4><p>A community starts praising endurance under hardship. That value might express strength, solidarity or a need to make suffering bearable. Would learning its origin change whether you endorse it?</p><footer><p><b>Read</b> <cite>On the Genealogy of Morality</cite></p><p class="tags">Ethics, Politics</p></footer></div></details>
+</section>
+<a class="next" href="#contemporary"><span>Next era</span><b>20th c. to today</b></a>
+</section>
+<section class="era" id="contemporary" style="--accent:#3e6267" aria-labelledby="contemporary-title"><header class="chapter-head"><div class="chapter-line"><p class="eyebrow">Twentieth century to today <span>·</span> c. 1879–present</p><a class="change" href="#browse" hidden>Change era</a></div><h2 id="contemporary-title">Language, power &amp; justice</h2><p>Many traditions develop in parallel, from formal logic and phenomenology to feminist, anticolonial and applied philosophy.</p><p class="start"><b>Start here</b> Try Rawls and Mills together. What changes when a theory of justice starts from a fair agreement, or from the history of unequal agreements?</p></header>
+<section class="group"><h3>New methods for logic and experience</h3>
+<details data-topics="Logic, Language" data-keywords="">
+<summary><span class="entry-main"><strong>Formal logic &amp; analytic philosophy</strong><span class="thinker">Gottlob Frege &amp; Bertrand Russell</span></span><span class="when">1879–1905</span><span class="chevron" aria-hidden="true"></span></summary>
+<div class="entry-body"><p class="claim">Frege builds a logic of quantification. Russell shows how analyzing definite descriptions can reveal a sentence’s underlying logical structure.</p><h4>The argument</h4><p>Frege’s quantifiers distinguish claims about all things from claims about at least one thing and make complex inferences easier to inspect. Russell analyzes descriptions so their apparent grammatical subject need not refer to an actual object.</p><h4>Try it</h4><p>“The present king of France is bald” appears to name someone. Russell’s analysis makes it assert, among other things, that there is exactly one present king of France. Which part fails?</p><footer><p><b>Read</b> <cite>Begriffsschrift and On Denoting</cite></p><p class="tags">Logic, Language</p></footer></div></details>
+<details data-topics="Mind, Knowledge" data-keywords="">
+<summary><span class="entry-main"><strong>Phenomenology</strong><span class="thinker">Edmund Husserl</span></span><span class="when">1900–13</span><span class="chevron" aria-hidden="true"></span></summary>
+<div class="entry-body"><p class="claim">Careful description can show how things are given in experience and how consciousness is directed toward objects.</p><h4>The argument</h4><p>Husserl studies intentionality, the way experience is typically experience of something. The phenomenological reduction brackets ordinary assumptions about independent existence so that the structure of experience itself can be examined.</p><h4>Try it</h4><p>You see only part of a cup, yet experience it as a whole with a hidden side. How does the unseen side figure in what you are currently aware of?</p><footer><p><b>Read</b> <cite>Logical Investigations and Ideas I</cite></p><p class="tags">Mind, Knowledge</p></footer></div></details>
+<details data-topics="Politics, Mind" data-keywords="">
+<summary><span class="entry-main"><strong>Race &amp; double consciousness</strong><span class="thinker">W. E. B. Du Bois</span></span><span class="when">1903 onward</span><span class="chevron" aria-hidden="true"></span></summary>
+<div class="entry-body"><p class="claim">Under racism, Black Americans confront the experience of seeing themselves through their own eyes and through a society that devalues them.</p><h4>The argument</h4><p>Du Bois uses the language of the veil and twoness to describe living as both American and Black in a racist society. Awareness of a hostile outside perspective can divide the self while also making social contradictions visible.</p><h4>Try it</h4><p>A student sees their ambition as ordinary but knows that teachers may read it through racial stereotypes. How might navigating both perspectives affect what the student knows about the institution?</p><footer><p><b>Read</b> <cite>The Souls of Black Folk</cite></p><p class="tags">Politics, Mind</p></footer></div></details>
+<details data-topics="Language, Logic" data-keywords="">
+<summary><span class="entry-main"><strong>Pictures and propositions</strong><span class="thinker">Ludwig Wittgenstein</span></span><span class="when">1921</span><span class="chevron" aria-hidden="true"></span></summary>
+<div class="entry-body"><p class="claim">A meaningful proposition can represent a possible state of affairs by sharing its logical form.</p><h4>The argument</h4><p>The early Wittgenstein treats the proposition as a model of a possible arrangement of objects. Its elements are related in a way that can correspond to their arrangement in reality, which lets the proposition be true or false.</p><h4>Try it</h4><p>A seating diagram represents people by showing an arrangement of names. How far can a similar model handle ordinary sentences about promises, wishes or obligations? Compare Wittgenstein’s later focus on use.</p><footer><p><b>Read</b> <cite>Tractatus Logico-Philosophicus</cite></p><p class="tags">Language, Logic</p></footer></div></details>
+<details data-topics="Science, Logic, Language" data-keywords="">
+<summary><span class="entry-main"><strong>Logical empiricism</strong><span class="thinker">Rudolf Carnap &amp; the Vienna Circle</span></span><span class="when">1920s–30s</span><span class="chevron" aria-hidden="true"></span></summary>
+<div class="entry-body"><p class="claim">Logical analysis and attention to empirical testing can clarify scientific claims and challenge traditional metaphysics.</p><h4>The argument</h4><p>Carnap and others used formal logic to clarify scientific language and relate claims to possible evidence. Their views developed over time as they faced questions about how theoretical entities and general laws can connect with observation.</p><h4>Try it</h4><p>An electron is not directly visible in the ordinary sense, yet a theory about it has testable consequences. How should a criterion of meaning handle claims whose links to evidence are indirect?</p><footer><p><b>Read</b> <cite>The Elimination of Metaphysics Through Logical Analysis of Language</cite></p><p class="tags">Science, Logic, Language</p></footer></div></details>
+<details data-topics="Reality, Mind" data-keywords="">
+<summary><span class="entry-main"><strong>Being-in-the-world</strong><span class="thinker">Martin Heidegger</span></span><span class="when">1927</span><span class="chevron" aria-hidden="true"></span></summary>
+<div class="entry-body"><p class="claim">Human existence is already involved in a meaningful world of practices and relationships.</p><h4>The argument</h4><p>Heidegger argues that we usually encounter things through practical involvement. Tools matter within networks of uses, purposes and other people. Reflective observation is one way of encountering things within that broader involvement.</p><h4>Try it</h4><p>While hammering, your attention may be on the shelf you are building. When the hammer breaks, it becomes a conspicuous object. What does that change reveal about how equipment normally appears?</p><footer><p><b>Read</b> <cite>Being and Time</cite></p><p class="tags">Reality, Mind</p></footer></div></details>
+</section>
+<section class="group"><h3>Science, freedom and the mind</h3>
+<details data-topics="Science, Knowledge" data-keywords="">
+<summary><span class="entry-main"><strong>Falsifiability</strong><span class="thinker">Karl Popper</span></span><span class="when">1934</span><span class="chevron" aria-hidden="true"></span></summary>
+<div class="entry-body"><p class="claim">A scientific theory must take the risk of being contradicted by conceivable observations.</p><h4>The argument</h4><p>Popper distinguishes the ability to test a theory from the accumulation of favorable examples. A good test puts a theory at risk. A successful test can corroborate it provisionally while leaving future revision possible.</p><h4>Try it</h4><p>A claim that all swans are white can be contradicted by a black swan. What if a failed prediction could instead come from a faulty instrument or a mistaken auxiliary assumption?</p><footer><p><b>Read</b> <cite>The Logic of Scientific Discovery</cite></p><p class="tags">Science, Knowledge</p></footer></div></details>
+<details data-topics="Ethics, Politics, Mind" data-keywords="">
+<summary><span class="entry-main"><strong>Existentialism &amp; feminist thought</strong><span class="thinker">Jean-Paul Sartre &amp; Simone de Beauvoir</span></span><span class="when">1943–49</span><span class="chevron" aria-hidden="true"></span></summary>
+<div class="entry-body"><p class="claim">Sartre argues that people make themselves through choices. Beauvoir shows how social conditions shape who can exercise freedom and how.</p><h4>The argument</h4><p>Sartre analyzes bad faith, in which people evade the responsibility of choosing by treating themselves as fixed roles. Beauvoir examines the material and social constraints that make freedom unequally available, including the treatment of women as the Other.</p><h4>Try it</h4><p>A worker says their role requires them to follow a rule they think is wrong. What choices actually remain open to them, and what costs would they face for refusing?</p><footer><p><b>Read</b> <cite>Existentialism Is a Humanism and The Second Sex</cite></p><p class="tags">Ethics, Politics, Mind</p></footer></div></details>
+<details data-topics="Mind, Language" data-keywords="">
+<summary><span class="entry-main"><strong>The category mistake</strong><span class="thinker">Gilbert Ryle</span></span><span class="when">1949</span><span class="chevron" aria-hidden="true"></span></summary>
+<div class="entry-body"><p class="claim">Treating the mind as a separate object alongside the body misclassifies concepts used to describe abilities and intelligent conduct.</p><h4>The argument</h4><p>Ryle objects that a mental concept can express a pattern of capacities and dispositions. Looking for a hidden thing that performs the work of intelligence can misread how such concepts operate.</p><h4>Try it</h4><p>A visitor sees the libraries and lecture halls and then asks where the university itself is. A similar mistake may occur when someone looks for cleverness as an extra event alongside a clever move.</p><footer><p><b>Read</b> <cite>The Concept of Mind</cite></p><p class="tags">Mind, Language</p></footer></div></details>
+<details data-topics="Knowledge, Science, Logic" data-keywords="">
+<summary><span class="entry-main"><strong>Holism &amp; naturalism</strong><span class="thinker">W. V. O. Quine</span></span><span class="when">1951</span><span class="chevron" aria-hidden="true"></span></summary>
+<div class="entry-body"><p class="claim">Experience tests beliefs as an interconnected system. Quine also challenges a sharp divide between truths of meaning and truths of fact.</p><h4>The argument</h4><p>Quine argues that experience bears on networks of beliefs, so a failed prediction leaves some choice over which part to revise. His challenge to analyticity questions whether truths held fixed by meaning form a sharply separate class.</p><h4>Try it</h4><p>If a predicted eclipse fails to appear, you might revise the model, the timing or your assumptions about the telescope. What guides the choice when several revisions could fit the evidence?</p><footer><p><b>Read</b> <cite>Two Dogmas of Empiricism</cite></p><p class="tags">Knowledge, Science, Logic</p></footer></div></details>
+</section>
+<section class="group"><h3>Language, public life and colonial power</h3>
+<details data-topics="Politics, Mind" data-keywords="">
+<summary><span class="entry-main"><strong>Anticolonial thought</strong><span class="thinker">Frantz Fanon</span></span><span class="when">1952–61</span><span class="chevron" aria-hidden="true"></span></summary>
+<div class="entry-body"><p class="claim">Colonial racism shapes lived experience and self-understanding. Decolonization requires transforming the structures that sustain it.</p><h4>The argument</h4><p>Fanon examines how racism shapes bodily experience, language and recognition. He also argues that political independence can leave colonial patterns in place if a national elite inherits existing structures of extraction.</p><h4>Try it</h4><p>If a former colony gains a flag and a new government while land and economic power remain concentrated, what kinds of dependence might survive?</p><footer><p><b>Read</b> <cite>Black Skin, White Masks and The Wretched of the Earth</cite></p><p class="tags">Politics, Mind</p></footer></div></details>
+<details data-topics="Language, Logic" data-keywords="">
+<summary><span class="entry-main"><strong>Ordinary language &amp; meaning as use</strong><span class="thinker">Ludwig Wittgenstein</span></span><span class="when">1953</span><span class="chevron" aria-hidden="true"></span></summary>
+<div class="entry-body"><p class="claim">For many words, meaning is understood by examining their use in shared practices.</p><h4>The argument</h4><p>The later Wittgenstein asks us to look at language-games, the activities in which words have a role. Some concepts are held together by overlapping similarities, which he calls family resemblances.</p><h4>Try it</h4><p>Chess, tag and solitaire are games despite differing in competition, physical activity and number of players. Can you find one feature they share, or does a pattern of overlap do the work?</p><footer><p><b>Read</b> <cite>Philosophical Investigations</cite></p><p class="tags">Language, Logic</p></footer></div></details>
+<details data-topics="Politics, Ethics" data-keywords="">
+<summary><span class="entry-main"><strong>Action &amp; political freedom</strong><span class="thinker">Hannah Arendt</span></span><span class="when">1958</span><span class="chevron" aria-hidden="true"></span></summary>
+<div class="entry-body"><p class="claim">Political freedom arises when people act and speak together in public, where they can initiate something new.</p><h4>The argument</h4><p>Arendt distinguishes the labor needed to sustain life, the work that makes durable things, and action involving a plurality of people. Through action and speech, people can begin something unexpected and reveal who they are.</p><h4>Try it</h4><p>Neighbors turn a private frustration into a public assembly and establish a new institution. What does their action make possible that individual choice alone could not achieve?</p><footer><p><b>Read</b> <cite>The Human Condition</cite></p><p class="tags">Politics, Ethics</p></footer></div></details>
+<details data-topics="Language, Logic" data-keywords="">
+<summary><span class="entry-main"><strong>Speech acts</strong><span class="thinker">J. L. Austin</span></span><span class="when">1962</span><span class="chevron" aria-hidden="true"></span></summary>
+<div class="entry-body"><p class="claim">Utterances can perform actions such as promising or naming when the relevant conventions and circumstances are in place.</p><h4>The argument</h4><p>Austin distinguishes what is said, the action performed in saying it, and the effects it has on listeners. Some acts require suitable authority, circumstances and follow-through to succeed.</p><h4>Try it</h4><p>“I promise to repay you” creates a commitment when said seriously in the right setting. The same words on stage usually do not. Which conditions make the difference?</p><footer><p><b>Read</b> <cite>How to Do Things with Words</cite></p><p class="tags">Language, Logic</p></footer></div></details>
+<details data-topics="Science, Knowledge" data-keywords="">
+<summary><span class="entry-main"><strong>Paradigm shifts</strong><span class="thinker">Thomas Kuhn</span></span><span class="when">1962</span><span class="chevron" aria-hidden="true"></span></summary>
+<div class="entry-body"><p class="claim">Scientific communities usually work within shared paradigms, but crises can lead to changes in their guiding problems and standards.</p><h4>The argument</h4><p>Kuhn calls much scientific work normal science, in which researchers solve puzzles within established standards. Persistent anomalies can contribute to crisis and a shift in what problems, tools and explanations are central.</p><h4>Try it</h4><p>A shift from Earth-centered to Sun-centered astronomy altered the way scientists treated planetary motion. What evidence matters when rival frameworks disagree about which problems are worth solving?</p><footer><p><b>Read</b> <cite>The Structure of Scientific Revolutions</cite></p><p class="tags">Science, Knowledge</p></footer></div></details>
+</section>
+<section class="group"><h3>Interpretation, critique and justice</h3>
+<details data-topics="Aesthetics" data-keywords="">
+<summary><span class="entry-main"><strong>The artworld</strong><span class="thinker">Arthur Danto</span></span><span class="when">1964</span><span class="chevron" aria-hidden="true"></span></summary>
+<div class="entry-body"><p class="claim">To see an object as art can require knowledge of artistic theories and history beyond what its appearance reveals.</p><h4>The argument</h4><p>Danto uses visually indistinguishable objects to show why appearance alone cannot decide artistic status. Interpretation within a history of art can make one object carry a meaning the other lacks.</p><h4>Try it</h4><p>A gallery sculpture resembles a supermarket carton. What would you need to know about its maker, context and artistic intentions before deciding what it expresses?</p><footer><p><b>Read</b> <cite>The Artworld</cite></p><p class="tags">Aesthetics</p></footer></div></details>
+<details data-topics="Language, Knowledge" data-keywords="">
+<summary><span class="entry-main"><strong>Deconstruction</strong><span class="thinker">Jacques Derrida</span></span><span class="when">1967</span><span class="chevron" aria-hidden="true"></span></summary>
+<div class="entry-body"><p class="claim">Close reading exposes how philosophical texts depend on distinctions and exclusions that their own arguments can unsettle.</p><h4>The argument</h4><p>Derrida examines oppositions such as speech and writing, where one term is often treated as more fundamental. He traces how the favored term relies on features assigned to the supposedly secondary one.</p><h4>Try it</h4><p>Speech seems more immediate because the speaker is present. Yet speakers rely on words being repeatable in new contexts, a feature often associated with writing. What does this do to the hierarchy?</p><footer><p><b>Read</b> <cite>Of Grammatology</cite></p><p class="tags">Language, Knowledge</p></footer></div></details>
+<details data-topics="Politics, Knowledge" data-keywords="">
+<summary><span class="entry-main"><strong>Critical theory</strong><span class="thinker">Jürgen Habermas</span></span><span class="when">1968</span><span class="chevron" aria-hidden="true"></span></summary>
+<div class="entry-body"><p class="claim">Inquiry can be guided by interests, including an emancipatory interest in uncovering social constraints that people can change.</p><h4>The argument</h4><p>Habermas distinguishes interests that guide prediction and control, understanding between people, and emancipation from constraints. He later studies how communication can support or distort public reasoning.</p><h4>Try it</h4><p>A workplace survey can measure satisfaction without exposing why employees fear speaking freely. What kind of inquiry could reveal that constraint and give participants a role in changing it?</p><footer><p><b>Read</b> <cite>Knowledge and Human Interests</cite></p><p class="tags">Politics, Knowledge</p></footer></div></details>
+<details data-topics="Politics, Ethics" data-keywords="veil of ignorance difference principle">
+<summary><span class="entry-main"><strong>Justice as fairness</strong><span class="thinker">John Rawls</span></span><span class="when">1971</span><span class="chevron" aria-hidden="true"></span></summary>
+<div class="entry-body"><p class="claim">Choose principles for society without knowing your own social position. This protects equal liberties and requires that permitted inequalities benefit the least advantaged, among other conditions.</p><h4>The argument</h4><p>Rawls’s original position is a thought experiment for choosing principles of justice. A veil of ignorance hides personal advantages. Equal basic liberties have priority, followed by fair equality of opportunity and the requirement that inequalities benefit the least advantaged.</p><h4>Try it</h4><p>Design a school system without knowing your income, location or abilities. What differences in funding would you accept, and how would you tell whether they improve the position of those with the fewest opportunities?</p><footer><p><b>Read</b> <cite>A Theory of Justice</cite></p><p class="tags">Politics, Ethics</p></footer></div></details>
+</section>
+<section class="group"><h3>Meaning, rights and consciousness</h3>
+<details data-topics="Language, Reality, Logic" data-keywords="">
+<summary><span class="entry-main"><strong>Rigid designation</strong><span class="thinker">Saul Kripke</span></span><span class="when">1972–80</span><span class="chevron" aria-hidden="true"></span></summary>
+<div class="entry-body"><p class="claim">A name can pick out the same individual in every possible situation in which that individual exists, even if our descriptions of them would change.</p><h4>The argument</h4><p>Kripke distinguishes how a name acquires its reference from what speakers believe about its bearer. Descriptions can help people identify someone, while the name can still refer to that person under counterfactual conditions in which the descriptions fail.</p><h4>Try it</h4><p>Aristotle might never have taught Alexander. When we consider that possibility, we still mean Aristotle by his name. Why would this be difficult if the name simply meant “Alexander’s teacher”?</p><footer><p><b>Read</b> <cite>Naming and Necessity</cite></p><p class="tags">Language, Reality, Logic</p></footer></div></details>
+<details data-topics="Politics, Ethics" data-keywords="">
+<summary><span class="entry-main"><strong>Libertarian entitlement</strong><span class="thinker">Robert Nozick</span></span><span class="when">1974</span><span class="chevron" aria-hidden="true"></span></summary>
+<div class="entry-body"><p class="claim">Justice in holdings depends on how property was acquired and transferred, and on correcting past injustices.</p><h4>The argument</h4><p>Nozick’s theory asks whether a distribution arose through just acquisition and voluntary transfer, with rectification where those conditions failed. It challenges theories that assess holdings by how well they fit an overall pattern.</p><h4>Try it</h4><p>If many people voluntarily pay to watch an athlete, the athlete becomes wealthier than others. When would the history of that outcome justify it, and which facts about the starting distribution would matter?</p><footer><p><b>Read</b> <cite>Anarchy, State, and Utopia</cite></p><p class="tags">Politics, Ethics</p></footer></div></details>
+<details data-topics="Mind, Reality" data-keywords="">
+<summary><span class="entry-main"><strong>The problem of consciousness</strong><span class="thinker">Thomas Nagel &amp; David Chalmers</span></span><span class="when">1974–96</span><span class="chevron" aria-hidden="true"></span></summary>
+<div class="entry-body"><p class="claim">Nagel asks what it is like to have another creature’s experience. Chalmers asks why physical processing is accompanied by experience at all.</p><h4>The argument</h4><p>Nagel distinguishes objective descriptions from the subjective character of experience. Chalmers separates questions about functions such as attention and report from the question of why performing those functions feels like anything.</p><h4>Try it</h4><p>You can learn how echolocation works and still wonder what it is like for a bat to navigate this way. Does this gap mark a limit of our imagination, a limit of current science, or a deeper explanatory problem?</p><footer><p><b>Read</b> <cite>What Is It Like to Be a Bat? (1974) and The Conscious Mind (1996)</cite></p><p class="tags">Mind, Reality</p></footer></div></details>
+<details data-topics="Politics, Knowledge" data-keywords="">
+<summary><span class="entry-main"><strong>Genealogy &amp; power</strong><span class="thinker">Michel Foucault</span></span><span class="when">1975–76</span><span class="chevron" aria-hidden="true"></span></summary>
+<div class="entry-body"><p class="claim">Institutions develop practices that classify, observe and discipline people, shaping what counts as normal and true.</p><h4>The argument</h4><p>Foucault studies how institutions develop techniques of examination, recordkeeping and surveillance. These practices make people comparable against norms and can lead them to monitor their own behavior.</p><h4>Try it</h4><p>A school rank turns a varied set of abilities into a single comparison, and students may start to judge themselves by it. What behavior does the ranking encourage, and which abilities does it overlook?</p><footer><p><b>Read</b> <cite>Discipline and Punish and The History of Sexuality I</cite></p><p class="tags">Politics, Knowledge</p></footer></div></details>
+<details data-topics="Ethics, Politics" data-keywords="">
+<summary><span class="entry-main"><strong>Animal ethics</strong><span class="thinker">Peter Singer</span></span><span class="when">1975</span><span class="chevron" aria-hidden="true"></span></summary>
+<div class="entry-body"><p class="claim">Comparable interests deserve equal consideration across species, including an animal’s interest in avoiding suffering.</p><h4>The argument</h4><p>Singer applies equal consideration to interests rather than requiring identical treatment for every being. The ability to suffer makes suffering morally relevant, regardless of species membership.</p><h4>Try it</h4><p>If a small improvement in food price depends on keeping many animals in severe distress, how should the savings be weighed? Would a different moral theory reach the same conclusion by another route?</p><footer><p><b>Read</b> <cite>Animal Liberation</cite></p><p class="tags">Ethics, Politics</p></footer></div></details>
+</section>
+<section class="group"><h3>Care, identity and structural injustice</h3>
+<details data-topics="Ethics" data-keywords="">
+<summary><span class="entry-main"><strong>Care ethics</strong><span class="thinker">Carol Gilligan</span></span><span class="when">1982</span><span class="chevron" aria-hidden="true"></span></summary>
+<div class="entry-body"><p class="claim">Moral judgment can attend to relationships, responsibilities and particular needs as well as rules and rights.</p><h4>The argument</h4><p>Gilligan highlights moral reasoning attentive to particular relationships and the needs of people involved. Subsequent care ethics also considers who performs care and how institutions distribute its burdens.</p><h4>Try it</h4><p>Two siblings have equal claims on a parent’s time, but one is in crisis. What would a caring response require from the parent, and what might fairness require over a longer period?</p><footer><p><b>Read</b> <cite>In a Different Voice</cite></p><p class="tags">Ethics</p></footer></div></details>
+<details data-topics="Politics, Language" data-keywords="">
+<summary><span class="entry-main"><strong>Gender performativity</strong><span class="thinker">Judith Butler</span></span><span class="when">1990</span><span class="chevron" aria-hidden="true"></span></summary>
+<div class="entry-body"><p class="claim">Repeated, socially regulated acts help constitute gender identities and make them appear stable.</p><h4>The argument</h4><p>Butler argues that repeated bodily and social practices produce the appearance of a stable gender identity. Those practices are shaped by norms, sanctions and recognizability, rather than being freely invented from scratch.</p><h4>Try it</h4><p>Workplace rules about dress, tone and gestures can make some forms of expression seem natural while penalizing others. What happens when someone repeats a convention in an unexpected way?</p><footer><p><b>Read</b> <cite>Gender Trouble</cite></p><p class="tags">Politics, Language</p></footer></div></details>
+<details data-topics="Politics, Knowledge" data-keywords="">
+<summary><span class="entry-main"><strong>Race &amp; the social contract</strong><span class="thinker">Charles W. Mills</span></span><span class="when">1997–2007</span><span class="chevron" aria-hidden="true"></span></summary>
+<div class="entry-body"><p class="claim">Racial hierarchy has shaped political institutions and the ways societies learn to misperceive their own history.</p><h4>The argument</h4><p>Mills uses a racial contract to explain how political orders that proclaim equality can distribute personhood, opportunity and protection along racial lines. His account of white ignorance examines how social arrangements sustain distorted ways of knowing.</p><h4>Try it</h4><p>A city treats present wealth as the product of neutral competition while overlooking past exclusion from property ownership. Which facts must be kept out of view for that story to seem plausible?</p><footer><p><b>Read</b> <cite>The Racial Contract and White Ignorance</cite></p><p class="tags">Politics, Knowledge</p></footer></div></details>
+<details data-topics="Politics, Ethics" data-keywords="">
+<summary><span class="entry-main"><strong>Capabilities approach</strong><span class="thinker">Amartya Sen &amp; Martha Nussbaum</span></span><span class="when">1999–2011</span><span class="chevron" aria-hidden="true"></span></summary>
+<div class="entry-body"><p class="claim">Assess justice and development by the real opportunities people have to do and be things they have reason to value.</p><h4>The argument</h4><p>Sen distinguishes the resources people hold from what they are actually able to do with them. Nussbaum develops a list of central capabilities and argues for thresholds of opportunity as a matter of justice.</p><h4>Try it</h4><p>Two people have the same income, but one needs expensive mobility support to reach work. Which comparison tells you more about justice: the resources they receive or the options they can actually exercise?</p><footer><p><b>Read</b> <cite>Development as Freedom and Creating Capabilities</cite></p><p class="tags">Politics, Ethics</p></footer></div></details>
+<details data-topics="Knowledge, Politics" data-keywords="">
+<summary><span class="entry-main"><strong>Epistemic injustice</strong><span class="thinker">Miranda Fricker</span></span><span class="when">2007</span><span class="chevron" aria-hidden="true"></span></summary>
+<div class="entry-body"><p class="claim">Prejudice can strip someone of credibility, and gaps in shared concepts can make certain experiences difficult to understand or communicate.</p><h4>The argument</h4><p>Fricker distinguishes testimonial injustice, in which prejudice gives a speaker less credibility, from hermeneutical injustice, in which unequal participation in meaning-making leaves experiences hard to explain.</p><h4>Try it</h4><p>A patient’s pain is dismissed because of stereotypes, while an employee struggles to name a kind of mistreatment for which their workplace has no shared vocabulary. How would the remedies differ?</p><footer><p><b>Read</b> <cite>Epistemic Injustice</cite></p><p class="tags">Knowledge, Politics</p></footer></div></details>
+<details data-topics="Politics, Ethics" data-keywords="">
+<summary><span class="entry-main"><strong>Structural injustice</strong><span class="thinker">Iris Marion Young</span></span><span class="when">2011</span><span class="chevron" aria-hidden="true"></span></summary>
+<div class="entry-body"><p class="claim">People involved in social processes that produce injustice share a forward-looking responsibility to change them.</p><h4>The argument</h4><p>Young distinguishes shared political responsibility for unjust processes from the liability of an individual who directly caused harm. People’s power, privilege and capacity to organize affect what they can do to change a system.</p><h4>Try it</h4><p>High rents can result from many ordinary decisions operating within the same housing rules. Who has the power to alter those rules, and what could people with less individual power do together?</p><footer><p><b>Read</b> <cite>Responsibility for Justice (2011)</cite></p><p class="tags">Politics, Ethics</p></footer></div></details>
+</section>
+</section></div>
+    <div class="empty" hidden>No entries match your search.<br><button type="button">Clear search</button></div>
+    <details class="notes" id="reading">
+      <summary>Further reading and timeline notes</summary>
+      <p>Dates mark approximate periods, occasions or publications. The eras overlap. The entries summarize or reconstruct arguments, and the practice questions use illustrative examples.</p>
+      <ul><li><a href="https://plato.stanford.edu/contents.html">Stanford Encyclopedia of Philosophy · Topic index</a></li><li><a href="https://plato.stanford.edu/entries/medieval-philosophy/">Stanford Encyclopedia of Philosophy · Medieval philosophy across traditions</a></li></ul>
+    </details>
+  </div>
+</main>
+<script>
+const paths = {
+  Ethics: ["What makes a life good?", "Compare Aristotle’s virtues, Bentham’s consequences, Kant’s duties and Gilligan’s account of care."],
+  Knowledge: ["What can we know?", "Start with Socratic inquiry’s challenge to confidence, then compare Descartes, Hume and Fricker on doubt, evidence and credibility."],
+  Politics: ["What makes society just?", "Follow Hobbes on peace, Rousseau on self-rule, Rawls on fairness and Mills on racial hierarchy."],
+  Reality: ["What is real?", "Compare Plato’s Forms, Spinoza’s single substance and Kant’s account of how experience is structured."],
+  Mind: ["What is a mind?", "Read Descartes on dualism alongside Ryle on mental concepts and Nagel and Chalmers on experience."],
+  Logic: ["What makes reasoning valid?", "Compare Aristotle’s syllogisms, Frege’s quantifiers and Russell’s analysis of descriptions."],
+  Language: ["How do words work?", "Follow Wittgenstein from pictures to practices, then compare Austin on speech acts and Kripke on names."],
+  Science: ["How does science change?", "Compare Bacon on testing cases, Hume on induction, Popper on falsifiability and Kuhn on paradigms."],
+  Religion: ["How do faith and reason meet?", "Read Anselm, Averroes and Kierkegaard to compare proof, interpretation and commitment."],
+  Aesthetics: ["What makes something art?", "Compare Kant’s account of a judgment of beauty with Danto’s account of what makes an object art."]
+};
+const search = document.querySelector("#search");
+const modeButtons = [...document.querySelectorAll("[data-mode]")];
+const eraPicker = document.querySelector("#era-picker");
+const questionPicker = document.querySelector("#question-picker");
+const questions = questionPicker.querySelector(".questions");
+const eraLinks = [...eraPicker.querySelectorAll("a")];
+const result = document.querySelector(".result");
+const status = document.querySelector("#status");
+const trail = document.querySelector("#trail");
+const empty = document.querySelector(".empty");
+const normalize = text => text.normalize("NFD").replace(/\p{Diacritic}/gu, "").toLowerCase();
+const eras = [...document.querySelectorAll(".era")].map(section => ({
+  section,
+  next: section.querySelector(".next"),
+  chapterIntro: section.querySelector(".start"),
+  change: section.querySelector(".change"),
+  groups: [...section.querySelectorAll(".group")].map(group => ({
+    group,
+    cards: [...group.querySelectorAll("details")].map(card => ({
+      card,
+      topics: card.dataset.topics.split(", "),
+      text: normalize(card.textContent + " " + card.dataset.keywords)
+    }))
+  }))
+}));
+const eraFromHash = () => eras.find(({section}) => "#" + section.id === location.hash)?.section.id;
+let era = eraFromHash() || eras[0].section.id;
+let mode = "eras";
+let question = "Ethics";
+
+function render() {
+  const terms = normalize(search.value.trim()).split(/\s+/).filter(Boolean);
+  const searching = terms.length > 0;
+  const following = mode === "questions" && !searching;
+  const acrossEras = searching || following;
+  let total = 0;
+  for (const {section, next, chapterIntro, change, groups} of eras) {
+    let eraCount = 0;
+    for (const {group, cards} of groups) {
+      let groupCount = 0;
+      for (const {card, topics, text} of cards) {
+        const matches = (!following || topics.includes(question)) && terms.every(term => text.includes(term));
+        card.hidden = !matches;
+        groupCount += Number(matches);
+      }
+      group.hidden = !groupCount;
+      eraCount += groupCount;
+    }
+    const show = eraCount > 0 && (acrossEras || section.id === era);
+    section.hidden = !show;
+    if (next) next.hidden = acrossEras;
+    chapterIntro.hidden = acrossEras;
+    change.hidden = acrossEras;
+    total += show ? eraCount : 0;
+  }
+  for (const link of eraLinks) {
+    if (!acrossEras && link.hash === "#" + era) link.setAttribute("aria-current", "location");
+    else link.removeAttribute("aria-current");
+  }
+  for (const button of modeButtons) button.setAttribute("aria-pressed", String(button.dataset.mode === mode));
+  for (const button of questions.children) button.setAttribute("aria-pressed", String(button.dataset.topic === question && following));
+  eraPicker.hidden = mode !== "eras";
+  questionPicker.hidden = mode !== "questions";
+  result.hidden = !acrossEras;
+  status.textContent = total + (total === 1 ? " reading" : " readings") + (searching ? " found across all eras" : " on this question");
+  trail.hidden = !following;
+  trail.textContent = following ? paths[question][1] : "";
+  empty.hidden = total !== 0;
+}
+
+for (const [topic, [label]] of Object.entries(paths)) {
+  const button = document.createElement("button");
+  button.type = "button";
+  button.dataset.topic = topic;
+  button.textContent = label;
+  button.addEventListener("click", () => {
+    question = topic;
+    search.value = "";
+    render();
+  });
+  questions.append(button);
+}
+for (const button of modeButtons) {
+  button.addEventListener("click", () => {
+    mode = button.dataset.mode;
+    search.value = "";
+    render();
+  });
+}
+function selectEra(id) {
+  era = id;
+  mode = "eras";
+  search.value = "";
+  render();
+}
+for (const link of [...eraLinks, ...document.querySelectorAll(".next")]) {
+  link.addEventListener("click", event => {
+    if (event.metaKey || event.ctrlKey || event.shiftKey || event.altKey) return;
+    selectEra(link.hash.slice(1));
+  });
+}
+window.addEventListener("hashchange", () => {
+  const id = eraFromHash();
+  if (id || !location.hash) selectEra(id || eras[0].section.id);
+});
+search.addEventListener("input", render);
+document.querySelector(".search").addEventListener("submit", event => event.preventDefault());
+empty.querySelector("button").addEventListener("click", () => {
+  search.value = "";
+  render();
+  search.focus();
+});
+document.querySelector(".mode").hidden = false;
+document.querySelector(".search").hidden = false;
+render();
+</script>
+<script>
+if ("serviceWorker" in navigator && (location.protocol === "https:" || location.hostname === "localhost")) {
+  navigator.serviceWorker.register("./sw.js").catch(error => {
+    console.warn("Offline support could not be enabled.", error);
+  });
+}
+</script>
+</body>
+</html>
